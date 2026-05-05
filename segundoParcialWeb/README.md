@@ -1,14 +1,14 @@
+# Clinica - Gestion de consultas medicas
 
+## Base de datos
 
-Base de datos:
-
-Crear primero la base:
+Crear la base:
 
 ```sql
 CREATE DATABASE clinica;
 ```
 
-Entrar a la base `clinica` y ejecutar:
+Entrar a la base `clinica` y ejecutar este script completo:
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS btree_gist;
@@ -72,9 +72,7 @@ CREATE TABLE IF NOT EXISTS consultas (
 
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint WHERE conname = 'consultas_consultorio_sin_cruce'
-    ) THEN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'consultas_consultorio_sin_cruce') THEN
         ALTER TABLE consultas
             ADD CONSTRAINT consultas_consultorio_sin_cruce
             EXCLUDE USING gist (
@@ -86,9 +84,7 @@ END $$;
 
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint WHERE conname = 'consultas_medico_sin_cruce'
-    ) THEN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'consultas_medico_sin_cruce') THEN
         ALTER TABLE consultas
             ADD CONSTRAINT consultas_medico_sin_cruce
             EXCLUDE USING gist (
@@ -98,96 +94,109 @@ BEGIN
     END IF;
 END $$;
 
+TRUNCATE TABLE consultas, medicos, pacientes, usuario_roles, usuarios, roles, consultorios
+RESTART IDENTITY CASCADE;
+
 INSERT INTO roles (nombre) VALUES
 ('ADMINISTRADOR'),
 ('MEDICO'),
-('PACIENTE')
-ON CONFLICT (nombre) DO NOTHING;
+('PACIENTE');
 
 INSERT INTO usuarios (username, password, enabled) VALUES
-('admin', '{noop}1234', true),
-('martatorres', '{noop}1234', true),
-('andresrojas', '{noop}1234', true),
-('anagomez', '{noop}1234', true),
-('carlosruiz', '{noop}1234', true)
-ON CONFLICT (username) DO NOTHING;
+('admin', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true),
+('martatorres', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true),
+('andresrojas', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true),
+('camilavargas', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true),
+('juanherrera', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true),
+('sofiamedina', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true),
+('anagomez', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true),
+('carlosruiz', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true),
+('lauradiaz', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true),
+('pedromartinez', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true),
+('mariatorres', '{bcrypt}$2a$10$9mbbU6je.x72JGCEjKCBSuWjNfhxNckpuPO5dmZrpVQJCvLWcHMBC', true);
 
 INSERT INTO usuario_roles (usuario_id, rol_id)
 SELECT u.id, r.id
 FROM usuarios u
 JOIN roles r ON r.nombre = 'ADMINISTRADOR'
-WHERE u.username = 'admin'
-ON CONFLICT DO NOTHING;
+WHERE u.username = 'admin';
 
 INSERT INTO usuario_roles (usuario_id, rol_id)
 SELECT u.id, r.id
 FROM usuarios u
 JOIN roles r ON r.nombre = 'MEDICO'
-WHERE u.username IN ('martatorres', 'andresrojas')
-ON CONFLICT DO NOTHING;
+WHERE u.username IN ('martatorres', 'andresrojas', 'camilavargas', 'juanherrera', 'sofiamedina');
 
 INSERT INTO usuario_roles (usuario_id, rol_id)
 SELECT u.id, r.id
 FROM usuarios u
 JOIN roles r ON r.nombre = 'PACIENTE'
-WHERE u.username IN ('anagomez', 'carlosruiz')
-ON CONFLICT DO NOTHING;
+WHERE u.username IN ('anagomez', 'carlosruiz', 'lauradiaz', 'pedromartinez', 'mariatorres');
 
 INSERT INTO medicos (nombre, especialidad, documento, usuario_id)
-SELECT 'Marta Torres', 'Medicina General', '1002003001', u.id
-FROM usuarios u
-WHERE u.username = 'martatorres'
-ON CONFLICT (documento) DO NOTHING;
-
-INSERT INTO medicos (nombre, especialidad, documento, usuario_id)
-SELECT 'Andres Rojas', 'Pediatria', '1002003002', u.id
-FROM usuarios u
-WHERE u.username = 'andresrojas'
-ON CONFLICT (documento) DO NOTHING;
-
-INSERT INTO pacientes (nombre, documento, usuario_id)
-SELECT 'Ana Gomez', '1100110011', u.id
-FROM usuarios u
-WHERE u.username = 'anagomez'
-ON CONFLICT (documento) DO NOTHING;
+SELECT datos.nombre, datos.especialidad, datos.documento, u.id
+FROM (
+    VALUES
+    ('Marta Torres', 'Medicina General', '1002003001', 'martatorres'),
+    ('Andres Rojas', 'Pediatria', '1002003002', 'andresrojas'),
+    ('Camila Vargas', 'Cardiologia', '1002003003', 'camilavargas'),
+    ('Juan Herrera', 'Dermatologia', '1002003004', 'juanherrera'),
+    ('Sofia Medina', 'Ginecologia', '1002003005', 'sofiamedina')
+) AS datos(nombre, especialidad, documento, username)
+JOIN usuarios u ON u.username = datos.username;
 
 INSERT INTO pacientes (nombre, documento, usuario_id)
-SELECT 'Carlos Ruiz', '2200220022', u.id
-FROM usuarios u
-WHERE u.username = 'carlosruiz'
-ON CONFLICT (documento) DO NOTHING;
+SELECT datos.nombre, datos.documento, u.id
+FROM (
+    VALUES
+    ('Ana Gomez', '1100110011', 'anagomez'),
+    ('Carlos Ruiz', '2200220022', 'carlosruiz'),
+    ('Laura Diaz', '3300330033', 'lauradiaz'),
+    ('Pedro Martinez', '4400440044', 'pedromartinez'),
+    ('Maria Torres', '5500550055', 'mariatorres')
+) AS datos(nombre, documento, username)
+JOIN usuarios u ON u.username = datos.username;
 
 INSERT INTO consultorios (numero) VALUES
-(101),
-(102),
-(103),
-(104)
-ON CONFLICT (numero) DO NOTHING;
+(101), (102), (103), (104), (105), (106), (107), (108), (109), (110),
+(201), (202), (203), (204), (205), (206), (207), (208), (209), (210);
 
 INSERT INTO consultas (motivo, fecha, hora_inicio, hora_fin, paciente_id, medico_id, consultorio_id)
 SELECT 'Control general', DATE '2026-05-06', TIME '08:00', TIME '08:30', p.id, m.id, c.id
 FROM pacientes p, medicos m, consultorios c
 WHERE p.documento = '1100110011'
   AND m.documento = '1002003001'
-  AND c.numero = 101
-  AND NOT EXISTS (
-      SELECT 1
-      FROM consultas
-      WHERE fecha = DATE '2026-05-06'
-        AND hora_inicio = TIME '08:00'
-        AND consultorio_id = c.id
-  );
+  AND c.numero = 101;
 ```
 
 ## Usuarios de prueba
+
+Todos usan la contrasena `1234`. En la base queda guardada con BCrypt de Spring Security.
 
 | Rol | Usuario | Contrasena |
 | --- | --- | --- |
 | ADMINISTRADOR | admin | 1234 |
 | MEDICO | martatorres | 1234 |
 | MEDICO | andresrojas | 1234 |
+| MEDICO | camilavargas | 1234 |
+| MEDICO | juanherrera | 1234 |
+| MEDICO | sofiamedina | 1234 |
 | PACIENTE | anagomez | 1234 |
 | PACIENTE | carlosruiz | 1234 |
+| PACIENTE | lauradiaz | 1234 |
+| PACIENTE | pedromartinez | 1234 |
+| PACIENTE | mariatorres | 1234 |
+
+Para revisar que quedaron bien:
+
+```sql
+SELECT u.username, u.password, u.enabled, string_agg(r.nombre, ', ') AS roles
+FROM usuarios u
+LEFT JOIN usuario_roles ur ON ur.usuario_id = u.id
+LEFT JOIN roles r ON r.id = ur.rol_id
+GROUP BY u.id, u.username, u.password, u.enabled
+ORDER BY u.username;
+```
 
 ## Configuracion
 

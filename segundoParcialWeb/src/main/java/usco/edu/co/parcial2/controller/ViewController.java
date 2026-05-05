@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import usco.edu.co.parcial2.repository.ConsultorioRepository;
+import usco.edu.co.parcial2.repository.PacienteRepository;
 import usco.edu.co.parcial2.service.ConsultaService;
 import usco.edu.co.parcial2.service.MedicoService;
 
@@ -16,12 +17,14 @@ public class ViewController {
     private final ConsultaService consultaService;
     private final MedicoService medicoService;
     private final ConsultorioRepository consultorioRepository;
+    private final PacienteRepository pacienteRepository;
 
     public ViewController(ConsultaService consultaService, MedicoService medicoService,
-            ConsultorioRepository consultorioRepository) {
+            ConsultorioRepository consultorioRepository, PacienteRepository pacienteRepository) {
         this.consultaService = consultaService;
         this.medicoService = medicoService;
         this.consultorioRepository = consultorioRepository;
+        this.pacienteRepository = pacienteRepository;
     }
 
     @GetMapping("/")
@@ -44,6 +47,7 @@ public class ViewController {
         model.addAttribute("nombreUsuario", principal.getName());
         model.addAttribute("consultas", consultaService.listarTodas());
         model.addAttribute("medicos", medicoService.listar());
+        model.addAttribute("pacientes", pacienteRepository.findAll());
         model.addAttribute("consultorios", consultorioRepository.findAll());
         return "admin";
     }
@@ -62,4 +66,3 @@ public class ViewController {
         return "paciente";
     }
 }
-

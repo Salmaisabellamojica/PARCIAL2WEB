@@ -27,7 +27,10 @@
             <form id="formConsulta" class="bg-white rounded-lg shadow p-5">
                 <h2 class="font-bold text-xl mb-4">Registrar consulta</h2>
                 <input type="hidden" id="consultaId">
-                <input id="nombrePaciente" maxlength="40" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ]{1,40}$" required placeholder="Nombre del paciente" class="w-full border rounded px-3 py-2 mb-3">
+                <select id="nombrePaciente" required class="w-full border rounded px-3 py-2 mb-3">
+                    <option value="">Seleccione paciente</option>
+                    <option th:each="p : ${pacientes}" th:value="${p.nombre}" th:text="${p.nombre}"></option>
+                </select>
                 <input id="motivo" maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ,.:-]{1,100}$" required placeholder="Motivo de la consulta" class="w-full border rounded px-3 py-2 mb-3">
                 <select id="numeroConsultorio" required class="w-full border rounded px-3 py-2 mb-3">
                     <option value="">Seleccione consultorio</option>
