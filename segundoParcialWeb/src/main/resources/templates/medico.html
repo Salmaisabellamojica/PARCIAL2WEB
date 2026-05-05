@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Medico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100">
+<div class="flex min-h-screen">
+    <aside class="w-64 bg-slate-800 text-white p-5">
+        <h2 class="text-2xl font-bold mb-8">MEDICO</h2>
+        <a href="/medico" class="block py-2 px-2 rounded bg-slate-900">Mis consultas</a>
+        <form th:action="@{/logout}" method="post" class="mt-8">
+            <button class="w-full text-left py-2 px-2 rounded hover:bg-red-600">Salir</button>
+        </form>
+    </aside>
+    <main class="flex-1 p-8">
+        <h1 class="text-3xl font-bold">Consultas asignadas</h1>
+        <p class="text-slate-600 mb-6">Bienvenid@, <span th:text="${nombreUsuario}"></span></p>
+        <section class="bg-white rounded-lg shadow p-5 overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead><tr class="text-left border-b"><th class="py-2">Paciente</th><th>Motivo</th><th>Consultorio</th><th>Fecha</th><th>Horario</th></tr></thead>
+                <tbody>
+                <tr th:each="c : ${consultas}" class="border-b">
+                    <td class="py-2" th:text="${c.paciente.nombre}"></td>
+                    <td th:text="${c.motivo}"></td>
+                    <td th:text="${c.consultorio.numero}"></td>
+                    <td th:text="${c.fecha}"></td>
+                    <td th:text="${c.horaInicio + ' - ' + c.horaFin}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>Administrador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="/js/admin.js"></script>
+</head>
+<body class="bg-slate-100">
+<div class="flex min-h-screen">
+    <aside class="w-64 bg-teal-800 text-white p-5">
+        <h2 class="text-2xl font-bold mb-8">ADMINISTRADOR</h2>
+        <a href="/admin" class="block py-2 px-2 rounded bg-teal-900">Consultas</a>
+        <a href="/swagger-ui.html" class="block py-2 px-2 rounded hover:bg-teal-700">Swagger UI</a>
+        <form th:action="@{/logout}" method="post" class="mt-8">
+            <button class="w-full text-left py-2 px-2 rounded hover:bg-red-600">Salir</button>
+        </form>
+    </aside>
+    <main class="flex-1 p-8">
+        <h1 class="text-3xl font-bold">Gestion de consultas</h1>
+        <p class="text-slate-600 mb-6">Bienvenid@, <span th:text="${nombreUsuario}"></span></p>
+        <p id="mensaje" class="mb-4 text-sm font-semibold"></p>
+
+        <section class="grid lg:grid-cols-2 gap-5 mb-6">
+            <form id="formConsulta" class="bg-white rounded-lg shadow p-5">
+                <h2 class="font-bold text-xl mb-4">Registrar consulta</h2>
+                <input type="hidden" id="consultaId">
+                <input id="nombrePaciente" maxlength="40" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ]{1,40}$" required placeholder="Nombre del paciente" class="w-full border rounded px-3 py-2 mb-3">
+                <input id="motivo" maxlength="100" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ,.:-]{1,100}$" required placeholder="Motivo de la consulta" class="w-full border rounded px-3 py-2 mb-3">
+                <input id="numeroConsultorio" type="number" min="1" required placeholder="Numero de consultorio" class="w-full border rounded px-3 py-2 mb-3">
+                <input id="fecha" type="date" required class="w-full border rounded px-3 py-2 mb-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <input id="horaInicio" type="time" required class="w-full border rounded px-3 py-2 mb-3">
+                    <input id="horaFin" type="time" required class="w-full border rounded px-3 py-2 mb-3">
+                </div>
+                <select id="medicoId" required class="w-full border rounded px-3 py-2 mb-3">
+                    <option value="">Seleccione medico</option>
+                    <option th:each="m : ${medicos}" th:value="${m.id}" th:text="${m.nombre + ' - ' + m.especialidad}"></option>
+                </select>
+                <button class="bg-teal-700 text-white px-4 py-2 rounded font-semibold">Guardar consulta</button>
+                <button type="button" id="limpiarConsulta" class="ml-2 border px-4 py-2 rounded">Limpiar</button>
+            </form>
+
+            <form id="formMedico" class="bg-white rounded-lg shadow p-5">
+                <h2 class="font-bold text-xl mb-4">Crear medico</h2>
+                <input type="hidden" id="medicoEditId">
+                <input id="medicoNombre" maxlength="40" required placeholder="Nombre" class="w-full border rounded px-3 py-2 mb-3">
+                <input id="especialidad" maxlength="60" required placeholder="Especialidad" class="w-full border rounded px-3 py-2 mb-3">
+                <input id="documento" pattern="^[0-9]{5,20}$" required placeholder="Documento" class="w-full border rounded px-3 py-2 mb-3">
+                <input id="username" required placeholder="Usuario" class="w-full border rounded px-3 py-2 mb-3">
+                <input id="password" type="password" minlength="4" required placeholder="Contrasena" class="w-full border rounded px-3 py-2 mb-3">
+                <button class="bg-slate-800 text-white px-4 py-2 rounded font-semibold">Guardar medico</button>
+            </form>
+        </section>
+
+        <section class="bg-white rounded-lg shadow p-5 overflow-x-auto">
+            <h2 class="font-bold text-xl mb-4">Consultas registradas</h2>
+            <table class="w-full text-sm">
+                <thead>
+                <tr class="text-left border-b">
+                    <th class="py-2">Paciente</th><th>Motivo</th><th>Consultorio</th><th>Fecha</th><th>Horario</th><th>Medico</th><th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${consultas}" class="border-b"
+                    th:data-id="${c.id}" th:data-paciente="${c.paciente.nombre}" th:data-motivo="${c.motivo}"
+                    th:data-consultorio="${c.consultorio.numero}" th:data-fecha="${c.fecha}"
+                    th:data-inicio="${c.horaInicio}" th:data-fin="${c.horaFin}" th:data-medico="${c.medico.id}">
+                    <td class="py-2" th:text="${c.paciente.nombre}"></td>
+                    <td th:text="${c.motivo}"></td>
+                    <td th:text="${c.consultorio.numero}"></td>
+                    <td th:text="${c.fecha}"></td>
+                    <td th:text="${c.horaInicio + ' - ' + c.horaFin}"></td>
+                    <td th:text="${c.medico.nombre}"></td>
+                    <td><button class="editarConsulta text-teal-700 font-semibold" type="button">Editar</button> <button class="eliminarConsulta text-red-600 font-semibold" type="button">Eliminar</button></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+</body>
+</html>
+

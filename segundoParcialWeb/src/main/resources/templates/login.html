@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Clinica - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center">
+<main class="bg-white w-full max-w-sm rounded-lg shadow p-7">
+    <h1 class="text-2xl font-bold text-slate-900 mb-1">Clinica</h1>
+    <p class="text-slate-500 mb-6">Ingrese sus credenciales</p>
+
+    <p th:if="${param.error}" class="mb-3 text-sm text-red-600">Usuario o contrasena incorrectos.</p>
+    <p th:if="${param.logout}" class="mb-3 text-sm text-green-600">Sesion cerrada correctamente.</p>
+
+    <form th:action="@{/login}" method="post" class="space-y-4">
+        <input name="username" required placeholder="Usuario" class="w-full border rounded px-3 py-2">
+        <input name="password" type="password" required placeholder="Contrasena" class="w-full border rounded px-3 py-2">
+        <button class="w-full bg-teal-700 text-white rounded px-3 py-2 font-semibold">Entrar</button>
+    </form>
+</main>
+</body>
+</html>
+
