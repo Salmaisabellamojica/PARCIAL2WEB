@@ -23,8 +23,6 @@ public record MedicoRequest(
         @Pattern(regexp = "^[A-Za-z0-9._-]{4,40}$", message = "El usuario solo permite letras, numeros, punto, guion y guion bajo")
         String username,
 
-        @NotBlank
-        @Size(min = 4, max = 60)
+        @Size(max = 60)
         String password) {
 }
-

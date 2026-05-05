@@ -44,15 +44,36 @@
             </form>
 
             <form id="formMedico" class="bg-white rounded-lg shadow p-5">
-                <h2 class="font-bold text-xl mb-4">Crear medico</h2>
+                <h2 class="font-bold text-xl mb-4">Gestionar medico</h2>
                 <input type="hidden" id="medicoEditId">
                 <input id="medicoNombre" maxlength="40" required placeholder="Nombre" class="w-full border rounded px-3 py-2 mb-3">
                 <input id="especialidad" maxlength="60" required placeholder="Especialidad" class="w-full border rounded px-3 py-2 mb-3">
                 <input id="documento" pattern="^[0-9]{5,20}$" required placeholder="Documento" class="w-full border rounded px-3 py-2 mb-3">
                 <input id="username" required placeholder="Usuario" class="w-full border rounded px-3 py-2 mb-3">
-                <input id="password" type="password" minlength="4" required placeholder="Contrasena" class="w-full border rounded px-3 py-2 mb-3">
+                <input id="password" type="password" minlength="4" placeholder="Contrasena nueva" class="w-full border rounded px-3 py-2 mb-3">
                 <button class="bg-slate-800 text-white px-4 py-2 rounded font-semibold">Guardar medico</button>
+                <button type="button" id="limpiarMedico" class="ml-2 border px-4 py-2 rounded">Limpiar</button>
             </form>
+        </section>
+
+        <section class="bg-white rounded-lg shadow p-5 overflow-x-auto mb-6">
+            <h2 class="font-bold text-xl mb-4">Medicos registrados</h2>
+            <table class="w-full text-sm">
+                <thead>
+                <tr class="text-left border-b"><th class="py-2">Nombre</th><th>Especialidad</th><th>Documento</th><th>Usuario</th><th>Acciones</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="m : ${medicos}" class="border-b"
+                    th:data-id="${m.id}" th:data-nombre="${m.nombre}" th:data-especialidad="${m.especialidad}"
+                    th:data-documento="${m.documento}" th:data-username="${m.usuario.username}">
+                    <td class="py-2" th:text="${m.nombre}"></td>
+                    <td th:text="${m.especialidad}"></td>
+                    <td th:text="${m.documento}"></td>
+                    <td th:text="${m.usuario.username}"></td>
+                    <td><button class="editarMedico text-slate-800 font-semibold" type="button">Editar</button> <button class="eliminarMedico text-red-600 font-semibold" type="button">Eliminar</button></td>
+                </tr>
+                </tbody>
+            </table>
         </section>
 
         <section class="bg-white rounded-lg shadow p-5 overflow-x-auto">
@@ -83,4 +104,3 @@
 </div>
 </body>
 </html>
-

@@ -39,7 +39,8 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll())
-                .exceptionHandling(ex -> ex.accessDeniedPage("/sin-permiso"));
+                .exceptionHandling(ex -> ex.accessDeniedPage("/sin-permiso"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
 
         return http.build();
     }
@@ -67,4 +68,3 @@ public class SecurityConfig {
         };
     }
 }
-

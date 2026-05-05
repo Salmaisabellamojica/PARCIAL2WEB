@@ -36,6 +36,9 @@ public class MedicoService {
 
     @Transactional
     public Medico crear(MedicoRequest request) {
+        if (request.password() == null || request.password().isBlank() || request.password().length() < 4) {
+            throw new IllegalArgumentException("La contrasena del medico debe tener minimo 4 caracteres");
+        }
         Rol rolMedico = rolRepository.findByNombre("MEDICO")
                 .orElseThrow(() -> new IllegalStateException("Rol MEDICO no existe"));
 
@@ -60,7 +63,10 @@ public class MedicoService {
         medico.setEspecialidad(request.especialidad());
         medico.setDocumento(request.documento());
         medico.getUsuario().setUsername(request.username());
-        if (!request.password().isBlank()) {
+        if (request.password() != null && !request.password().isBlank() && request.password().length() < 4) {
+            throw new IllegalArgumentException("La contrasena del medico debe tener minimo 4 caracteres");
+        }
+        if (request.password() != null && !request.password().isBlank()) {
             medico.getUsuario().setPassword(passwordEncoder.encode(request.password()));
         }
         return medico;
@@ -80,4 +86,3 @@ public class MedicoService {
                 .orElseThrow(() -> new IllegalArgumentException("Medico no encontrado"));
     }
 }
-

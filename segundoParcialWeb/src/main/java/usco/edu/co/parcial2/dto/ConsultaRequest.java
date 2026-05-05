@@ -20,7 +20,7 @@ public record ConsultaRequest(
         @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 ,.:-]{1,100}$", message = "El motivo solo permite texto alfanumerico basico y maximo 100 caracteres")
         String motivo,
 
-        @NotNull
+        @NotBlank
         @Pattern(regexp = "^[0-9]{1,5}$", message = "El numero de consultorio debe ser numerico")
         String numeroConsultorio,
 
@@ -37,4 +37,3 @@ public record ConsultaRequest(
         @NotNull
         Long medicoId) {
 }
-
