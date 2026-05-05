@@ -50,11 +50,7 @@ public class ConsultaService {
         Medico medico = medicoRepository.findById(request.medicoId())
                 .orElseThrow(() -> new IllegalArgumentException("Medico no encontrado"));
         Consultorio consultorio = consultorioRepository.findByNumero(Integer.valueOf(request.numeroConsultorio()))
-                .orElseGet(() -> {
-                    Consultorio nuevo = new Consultorio();
-                    nuevo.setNumero(Integer.valueOf(request.numeroConsultorio()));
-                    return consultorioRepository.save(nuevo);
-                });
+                .orElseThrow(() -> new IllegalArgumentException("Consultorio no encontrado. Seleccione un consultorio registrado."));
         Paciente paciente = pacienteRepository.findByNombreIgnoreCase(request.nombrePaciente())
                 .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado. Registre el paciente antes de crear la consulta."));
 
@@ -137,4 +133,3 @@ public class ConsultaService {
         }
     }
 }
-
